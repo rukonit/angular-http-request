@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {map} from 'rxjs/operators'
 import { Post } from './post.model';
+import { PostService } from './posts.service';
 
 @Component({
   selector: 'app-root',
@@ -9,48 +9,54 @@ import { Post } from './post.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  loadedPosts = [];
+  loadedPosts: Post[] = [];
+  isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postService: PostService) {}
 
   ngOnInit() {
-    this.fetchPosts();
+    this.isFetching = true
+  this.postService.fetchPosts().subscribe((posts => {
+
+    this.loadedPosts = posts;
+    this.isFetching = false;
+  }));
   }
 
   onCreatePost(postData: Post) {
     // Send Http request
-    this.http.post<{name: string}>('https://recipe-backend-df265-default-rtdb.firebaseio.com/posts.json', postData).subscribe(responseData => {
-      console.log(responseData);
-    })
+   this.postService.createAndStorePost(postData.title, postData.content).subscribe(responseData => {
+    console.log(responseData);
+    this.postService.fetchPosts().subscribe((posts => {
+    
+      this.loadedPosts = posts;
+
+    }));
+  })
   }
 
   onFetchPosts() {
+    this.isFetching = true
     // Send Http request\
-    this.fetchPosts();
+    setTimeout(()=> {   
+      
+      this.postService.fetchPosts().subscribe((posts => {
+    
+        this.loadedPosts = posts;
+        this.isFetching = false;
+      }));
+     }, 2000)
+   
   }
 
   onClearPosts() {
     // Send Http request
+    this.postService.deletePost().subscribe(()=> {
+      this.loadedPosts = [];
+    })
   }
 
-  private fetchPosts() {
-    this.http.get<{[key: string]: Post}>("https://recipe-backend-df265-default-rtdb.firebaseio.com/posts.json")
-    .pipe(map(responseData=> {
-      const postsArray: Post[] = [];
-      for (const key in responseData) {
-        if(responseData.hasOwnProperty(key)){
-        postsArray.push({...responseData[key], id: key})
-      }
-    }
 
-    return postsArray;
-    }))
-    .subscribe(
-      responseData => {
-        console.log(responseData)
-      } 
-    );
-  }
     
 }
 
