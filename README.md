@@ -1,10 +1,10 @@
-# NgCompleteGuideUpdate
+# Angular HTTP Request
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.5.
+In this project I have implemented post requests, get requests, get and transform data, loading indicators, error handling, sending customer headers, query params and interceptors. Please feel free to browse through the app and also check the logs in console for viewing the logging done in interceptor.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Navigate to [https://competent-goodall-28adf4.netlify.app/](https://competent-goodall-28adf4.netlify.app/) to browse the app. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
